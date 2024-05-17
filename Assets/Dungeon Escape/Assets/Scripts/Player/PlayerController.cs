@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable
 {
     private Rigidbody2D _rb;
     private bool _isGrounded = false;
@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     private PlayerAnimation _playerAnimation;
     private SpriteRenderer _playerSpriteRenderer;
     private SpriteRenderer _swordSpriteRenderer;
+
+    public int Health { get; set; }
 
     // Start is called before the first frame update
     void Start()
@@ -92,5 +94,13 @@ public class PlayerController : MonoBehaviour
             _isGrounded = true;
             _playerAnimation.Jump(false);
         }
+    }
+
+    public void Damage()
+    {
+        //if(Health < 1)
+        //{
+        //    _playerAnimation.Death();
+        //}
     }
 }
