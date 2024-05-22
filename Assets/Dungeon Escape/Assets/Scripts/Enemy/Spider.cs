@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Spider : Enemy, IDamageable
-{
+{ 
     [SerializeField] private GameObject _acidPrefab;
     public int Health { get; set; }
 
@@ -26,9 +26,16 @@ public class Spider : Enemy, IDamageable
 
     public void Damage()
     {
+        if (isDead)
+        {
+            return;
+        }
+
         Health--;
         if (Health < 1)
         {
+            GameObject diamond = Instantiate(diamondPrefab, transform.position, Quaternion.identity) as GameObject;
+            diamond.GetComponent<Diamond>()._value = this.gems;
             isDead = true;
             anim.SetTrigger("Death");
         }

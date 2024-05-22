@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour, IDamageable
     private SpriteRenderer _playerSpriteRenderer;
     private SpriteRenderer _swordSpriteRenderer;
 
+
+    public int _diamond;
     public int Health { get; set; }
 
     // Start is called before the first frame update
@@ -21,20 +23,28 @@ public class PlayerController : MonoBehaviour, IDamageable
         _playerSpriteRenderer = transform.GetChild(0).GetComponentInChildren<SpriteRenderer>();
         _swordSpriteRenderer = transform.GetChild(1).GetComponentInChildren<SpriteRenderer>();
         _rb = GetComponent<Rigidbody2D>();
+        Health = 4;
+        Debug.Log("Player Health: " + Health);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Health < 1)
+        {
+            return;
+        }
+
         //Player Movement
         Movement();
 
         Attack();
+
     }
 
     void Attack()
     {
-        if (Input.GetMouseButtonDown(0) && _isGrounded)
+        if (SimpleInput.GetButtonDown("A_Button") && _isGrounded)
         {
             _playerAnimation.Attack();
         }
@@ -46,7 +56,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         Jump();
 
         // Player Movement
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float horizontalInput = SimpleInput.GetAxisRaw("Horizontal"); //Input.GetAxisRaw("Horizontal");
 
         // FLipping of Player
         Flipping(horizontalInput);
@@ -57,7 +67,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && _isGrounded)
+        if ((Input.GetKeyDown(KeyCode.Space) || SimpleInput.GetButtonDown("B_Button")) && _isGrounded)
         {
             _rb.velocity = new Vector2(_rb.velocity.x, _jumpForce);
             _isGrounded = false;
@@ -98,9 +108,22 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     public void Damage()
     {
-        //if(Health < 1)
-        //{
-        //    _playerAnimation.Death();
-        //}
+        if (Health < 1)
+        {
+            return;
+        }
+        Health--;
+        Debug.Log("Player Health: " + Health);
+        UIManager.Instance.UpdateLives(Health);
+        if(Health < 1)
+        {
+            _playerAnimation.Death();
+        }
+    }
+
+    public void AddGems(int amount)
+    {
+        _diamond += amount;
+        UIManager.Instance.UpdateGemCount(_diamond);
     }
 }
